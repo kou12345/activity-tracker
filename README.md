@@ -99,7 +99,3 @@ SQLiteを使用してローカルにデータを保存します。データベ�
 ```
 ~/Library/Application Support/ActivityTracker/activity_tracker.db
 ```
-
-## ライセンス
-
-MIT License
