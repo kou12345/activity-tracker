@@ -51,7 +51,7 @@ struct ReportsView: View {
         .onAppear {
             loadData()
         }
-        .onChange(of: appState.selectedReportPeriod) { _, _ in
+        .onChange(of: appState.selectedReportPeriod) { _ in
             loadData()
         }
     }
@@ -145,125 +145,142 @@ struct DailyReportView: View {
 
     var body: some View {
         VStack(spacing: 20) {
-            // Summary Cards
-            LazyVGrid(columns: [
-                GridItem(.flexible()),
-                GridItem(.flexible()),
-                GridItem(.flexible())
-            ], spacing: 16) {
-                ReportCard(title: "総作業時間", value: formatDuration(totalTime), icon: "clock.fill")
-                ReportCard(title: "集中セッション", value: "\(focusSessions.count)回", icon: "brain.head.profile")
-                ReportCard(
-                    title: "平均集中時間",
-                    value: focusSessions.isEmpty ? "0m" : formatDuration(focusSessions.reduce(0) { $0 + $1.durationSeconds } / focusSessions.count),
-                    icon: "timer"
-                )
-            }
-            .padding(.horizontal)
-
-            // Hourly Chart
-            VStack(alignment: .leading, spacing: 12) {
-                Text("時間帯別アクティビティ")
-                    .font(.headline)
-
-                if #available(macOS 14.0, *) {
-                    Chart(hourlyActivity) { data in
-                        BarMark(
-                            x: .value("時間", data.hour),
-                            y: .value("レベル", data.activityLevel)
-                        )
-                        .foregroundStyle(Color.blue.gradient)
-                    }
-                    .chartXAxis {
-                        AxisMarks(values: [0, 6, 12, 18, 23])
-                    }
-                    .frame(height: 200)
-                } else {
-                    SimpleBarChart(data: hourlyActivity)
-                        .frame(height: 200)
-                }
-            }
-            .padding()
-            .background(Color(NSColor.controlBackgroundColor))
-            .cornerRadius(12)
-            .padding(.horizontal)
-
+            summaryCards
+            hourlyChart
             HStack(spacing: 16) {
-                // Top Apps
-                VStack(alignment: .leading, spacing: 12) {
-                    Text("使用アプリ TOP 10")
-                        .font(.headline)
-
-                    if topApps.isEmpty {
-                        Text("データがありません")
-                            .foregroundColor(.secondary)
-                    } else {
-                        ForEach(Array(topApps.prefix(10).enumerated()), id: \.element.id) { index, app in
-                            HStack {
-                                Text("\(index + 1)")
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                                    .frame(width: 20)
-
-                                Circle()
-                                    .fill(Color(app.color))
-                                    .frame(width: 8, height: 8)
-
-                                Text(app.appName)
-                                    .lineLimit(1)
-
-                                Spacer()
-
-                                Text(app.formattedDuration)
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                            }
-                        }
-                    }
-                }
-                .padding()
-                .background(Color(NSColor.controlBackgroundColor))
-                .cornerRadius(12)
-
-                // Input Stats
-                VStack(alignment: .leading, spacing: 12) {
-                    Text("入力統計")
-                        .font(.headline)
-
-                    if let summary = inputSummary {
-                        VStack(spacing: 16) {
-                            InputStatRow(
-                                icon: "keyboard.fill",
-                                title: "キーストローク",
-                                value: "\(summary.totalKeystrokes)"
-                            )
-                            InputStatRow(
-                                icon: "cursorarrow.click.2",
-                                title: "クリック",
-                                value: "\(summary.totalClicks)"
-                            )
-                            InputStatRow(
-                                icon: "arrow.up.arrow.down",
-                                title: "スクロール",
-                                value: String(format: "%.0f", summary.totalScroll)
-                            )
-                        }
-                    } else {
-                        Text("データがありません")
-                            .foregroundColor(.secondary)
-                    }
-
-                    Spacer()
-                }
-                .padding()
-                .background(Color(NSColor.controlBackgroundColor))
-                .cornerRadius(12)
+                topAppsSection
+                inputStatsSection
             }
             .padding(.horizontal)
         }
         .onAppear {
             loadData()
         }
+    }
+
+    private var summaryCards: some View {
+        LazyVGrid(columns: [
+            GridItem(.flexible()),
+            GridItem(.flexible()),
+            GridItem(.flexible())
+        ], spacing: 16) {
+            ReportCard(title: "総作業時間", value: formatDuration(totalTime), icon: "clock.fill")
+            ReportCard(title: "集中セッション", value: "\(focusSessions.count)回", icon: "brain.head.profile")
+            ReportCard(
+                title: "平均集中時間",
+                value: averageFocusTime,
+                icon: "timer"
+            )
+        }
+        .padding(.horizontal)
+    }
+
+    private var averageFocusTime: String {
+        focusSessions.isEmpty ? "0m" : formatDuration(focusSessions.reduce(0) { $0 + $1.durationSeconds } / focusSessions.count)
+    }
+
+    private var hourlyChart: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("時間帯別アクティビティ")
+                .font(.headline)
+
+            if #available(macOS 14.0, *) {
+                Chart(hourlyActivity) { data in
+                    BarMark(
+                        x: .value("時間", data.hour),
+                        y: .value("レベル", data.activityLevel)
+                    )
+                    .foregroundStyle(Color.blue.gradient)
+                }
+                .chartXAxis {
+                    AxisMarks(values: [0, 6, 12, 18, 23])
+                }
+                .frame(height: 200)
+            } else {
+                SimpleBarChart(data: hourlyActivity)
+                    .frame(height: 200)
+            }
+        }
+        .padding()
+        .background(Color(NSColor.controlBackgroundColor))
+        .cornerRadius(12)
+        .padding(.horizontal)
+    }
+
+    private var topAppsSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("使用アプリ TOP 10")
+                .font(.headline)
+
+            if topApps.isEmpty {
+                Text("データがありません")
+                    .foregroundColor(.secondary)
+            } else {
+                ForEach(Array(topApps.prefix(10).enumerated()), id: \.element.id) { index, app in
+                    topAppRow(index: index, app: app)
+                }
+            }
+        }
+        .padding()
+        .background(Color(NSColor.controlBackgroundColor))
+        .cornerRadius(12)
+    }
+
+    private func topAppRow(index: Int, app: AppUsageSummary) -> some View {
+        HStack {
+            Text("\(index + 1)")
+                .font(.caption)
+                .foregroundColor(.secondary)
+                .frame(width: 20)
+
+            Circle()
+                .fill(app.color)
+                .frame(width: 8, height: 8)
+
+            Text(app.appName)
+                .lineLimit(1)
+
+            Spacer()
+
+            Text(app.formattedDuration)
+                .font(.caption)
+                .foregroundColor(.secondary)
+        }
+    }
+
+    private var inputStatsSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("入力統計")
+                .font(.headline)
+
+            if let summary = inputSummary {
+                VStack(spacing: 16) {
+                    InputStatRow(
+                        icon: "keyboard.fill",
+                        title: "キーストローク",
+                        value: "\(summary.totalKeystrokes)"
+                    )
+                    InputStatRow(
+                        icon: "cursorarrow.click.2",
+                        title: "クリック",
+                        value: "\(summary.totalClicks)"
+                    )
+                    InputStatRow(
+                        icon: "arrow.up.arrow.down",
+                        title: "スクロール",
+                        value: String(format: "%.0f", summary.totalScroll)
+                    )
+                }
+            } else {
+                Text("データがありません")
+                    .foregroundColor(.secondary)
+            }
+
+            Spacer()
+        }
+        .padding()
+        .background(Color(NSColor.controlBackgroundColor))
+        .cornerRadius(12)
     }
 
     private func loadData() {
@@ -619,9 +636,4 @@ struct InputStatRow: View {
                 .fontWeight(.medium)
         }
     }
-}
-
-#Preview {
-    ReportsView()
-        .environmentObject(AppState.shared)
 }

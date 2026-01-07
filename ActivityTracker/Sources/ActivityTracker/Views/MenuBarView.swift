@@ -67,7 +67,7 @@ struct AppUsageRow: View {
     var body: some View {
         HStack(spacing: 12) {
             Circle()
-                .fill(Color(app.color))
+                .fill(app.color)
                 .frame(width: 8, height: 8)
 
             Text(app.appName)
@@ -110,9 +110,4 @@ struct MenuButton: View {
             isHovered = hovering
         }
     }
-}
-
-#Preview {
-    MenuBarView()
-        .environmentObject(AppState.shared)
 }

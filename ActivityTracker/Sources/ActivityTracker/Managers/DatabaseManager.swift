@@ -211,7 +211,8 @@ class DatabaseManager {
                 .filter(startTime >= startDate && startTime < endDate)
                 .select(activeSeconds.sum)
 
-            if let total = try db.scalar(query) {
+            if let row = try db.pluck(query),
+               let total = row[activeSeconds.sum] {
                 return total
             }
             return 0
@@ -416,7 +417,8 @@ class DatabaseManager {
                 .filter(startTime >= startDate && startTime < endDate)
                 .select(durationSeconds.sum)
 
-            if let total = try db.scalar(query) {
+            if let row = try db.pluck(query),
+               let total = row[durationSeconds.sum] {
                 return total
             }
             return 0

@@ -124,7 +124,7 @@ struct HistoryView: View {
                                 ForEach(detail.appSummaries) { app in
                                     HStack {
                                         Circle()
-                                            .fill(Color(app.color))
+                                            .fill(app.color)
                                             .frame(width: 8, height: 8)
 
                                         Text(app.appName)
@@ -344,7 +344,7 @@ struct TimelineRow: View {
                 .frame(width: 50)
 
             Circle()
-                .fill(Color(AppColor.forBundleId(log.bundleId)))
+                .fill(AppColor.forBundleId(log.bundleId))
                 .frame(width: 8, height: 8)
 
             VStack(alignment: .leading, spacing: 2) {
@@ -379,8 +379,4 @@ struct TimelineRow: View {
             return "\(seconds)s"
         }
     }
-}
-
-#Preview {
-    HistoryView()
 }

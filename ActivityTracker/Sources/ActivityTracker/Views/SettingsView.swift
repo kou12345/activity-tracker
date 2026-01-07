@@ -36,7 +36,7 @@ struct GeneralSettingsView: View {
         Form {
             Section {
                 Toggle("ログイン時に起動", isOn: $settings.launchAtLogin)
-                    .onChange(of: settings.launchAtLogin) { _, newValue in
+                    .onChange(of: settings.launchAtLogin) { newValue in
                         setLaunchAtLogin(enabled: newValue)
                     }
 
@@ -291,8 +291,4 @@ struct ExportSheet: View {
         .padding()
         .frame(width: 400)
     }
-}
-
-#Preview {
-    SettingsView()
 }

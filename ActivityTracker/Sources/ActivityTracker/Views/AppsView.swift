@@ -67,7 +67,7 @@ struct AppsView: View {
         .onAppear {
             loadData()
         }
-        .onChange(of: selectedPeriod) { _, _ in
+        .onChange(of: selectedPeriod) { _ in
             loadData()
         }
     }
@@ -117,7 +117,7 @@ struct AppListRow: View {
     var body: some View {
         HStack(spacing: 12) {
             Circle()
-                .fill(Color(app.color))
+                .fill(app.color)
                 .frame(width: 12, height: 12)
 
             VStack(alignment: .leading, spacing: 2) {
@@ -155,7 +155,7 @@ struct AppDetailView: View {
                 // Header
                 HStack(spacing: 16) {
                     Circle()
-                        .fill(Color(app.color))
+                        .fill(app.color)
                         .frame(width: 48, height: 48)
 
                     VStack(alignment: .leading, spacing: 4) {
@@ -191,7 +191,7 @@ struct AppDetailView: View {
                                 x: .value("日付", data.date, unit: .day),
                                 y: .value("時間（分）", data.minutes)
                             )
-                            .foregroundStyle(Color(app.color).gradient)
+                            .foregroundStyle(app.color.gradient)
                         }
                         .frame(height: 200)
                     } else {
@@ -211,7 +211,7 @@ struct AppDetailView: View {
         .onAppear {
             loadDailyUsage()
         }
-        .onChange(of: app.bundleId) { _, _ in
+        .onChange(of: app.bundleId) { _ in
             loadDailyUsage()
         }
     }
@@ -264,9 +264,4 @@ struct DailyUsageData: Identifiable {
     let date: Date
     let minutes: Int
     var id: Date { date }
-}
-
-#Preview {
-    AppsView()
-        .environmentObject(AppState.shared)
 }

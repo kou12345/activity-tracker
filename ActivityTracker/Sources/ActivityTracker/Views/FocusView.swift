@@ -124,7 +124,7 @@ struct FocusView: View {
 
                         HStack(spacing: 16) {
                             Circle()
-                                .fill(Color(AppColor.forBundleId(longest.bundleId)))
+                                .fill(AppColor.forBundleId(longest.bundleId))
                                 .frame(width: 40, height: 40)
 
                             VStack(alignment: .leading, spacing: 4) {
@@ -180,7 +180,7 @@ struct FocusView: View {
         .onAppear {
             loadData()
         }
-        .onChange(of: selectedPeriod) { _, _ in
+        .onChange(of: selectedPeriod) { _ in
             loadData()
         }
     }
@@ -279,7 +279,7 @@ struct FocusSessionRow: View {
     var body: some View {
         HStack(spacing: 12) {
             Circle()
-                .fill(Color(AppColor.forBundleId(session.bundleId)))
+                .fill(AppColor.forBundleId(session.bundleId))
                 .frame(width: 8, height: 8)
 
             Text(session.appName)
@@ -336,9 +336,4 @@ struct SimpleFocusChart: View {
             .stroke(Color.purple, lineWidth: 2)
         }
     }
-}
-
-#Preview {
-    FocusView()
-        .environmentObject(AppState.shared)
 }

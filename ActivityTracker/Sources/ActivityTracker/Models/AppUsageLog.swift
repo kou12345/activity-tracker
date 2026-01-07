@@ -37,27 +37,28 @@ struct AppUsageSummary: Identifiable {
         }
     }
 
-    var color: AppColor {
+    var color: Color {
         AppColor.forBundleId(bundleId)
     }
 }
 
+import SwiftUI
+import AppKit
+
 enum AppColor {
-    static func forBundleId(_ bundleId: String) -> NSColor {
-        let colors: [NSColor] = [
-            .systemGreen,
-            .systemBlue,
-            .systemPurple,
-            .systemOrange,
-            .systemPink,
-            .systemYellow,
-            .systemTeal,
-            .systemIndigo
+    static func forBundleId(_ bundleId: String) -> Color {
+        let colors: [Color] = [
+            Color(NSColor.systemGreen),
+            Color(NSColor.systemBlue),
+            Color(NSColor.systemPurple),
+            Color(NSColor.systemOrange),
+            Color(NSColor.systemPink),
+            Color(NSColor.systemYellow),
+            Color(NSColor.systemTeal),
+            Color(NSColor.systemIndigo)
         ]
 
         let hash = abs(bundleId.hashValue)
         return colors[hash % colors.count]
     }
 }
-
-import AppKit

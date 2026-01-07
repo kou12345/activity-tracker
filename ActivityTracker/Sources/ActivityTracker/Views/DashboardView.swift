@@ -249,7 +249,7 @@ struct AppProgressRow: View {
         VStack(alignment: .leading, spacing: 4) {
             HStack {
                 Circle()
-                    .fill(Color(app.color))
+                    .fill(app.color)
                     .frame(width: 8, height: 8)
                 Text(app.appName)
                     .lineLimit(1)
@@ -267,7 +267,7 @@ struct AppProgressRow: View {
                         .cornerRadius(2)
 
                     Rectangle()
-                        .fill(Color(app.color))
+                        .fill(app.color)
                         .frame(width: geometry.size.width * progress, height: 4)
                         .cornerRadius(2)
                 }
@@ -315,9 +315,4 @@ struct SimpleBarChart: View {
             }
         }
     }
-}
-
-#Preview {
-    DashboardView()
-        .environmentObject(AppState.shared)
 }

@@ -18,10 +18,7 @@ let package = Package(
             dependencies: [
                 .product(name: "SQLite", package: "SQLite.swift")
             ],
-            path: "Sources/ActivityTracker",
-            resources: [
-                .process("../Resources")
-            ]
+            path: "Sources/ActivityTracker"
         )
     ]
 )

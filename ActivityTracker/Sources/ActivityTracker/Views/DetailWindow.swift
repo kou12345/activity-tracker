@@ -40,8 +40,3 @@ struct Sidebar: View {
         .frame(minWidth: 180)
     }
 }
-
-#Preview {
-    DetailWindow()
-        .environmentObject(AppState.shared)
-}
